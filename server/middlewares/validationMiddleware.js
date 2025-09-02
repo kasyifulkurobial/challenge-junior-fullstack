@@ -59,3 +59,77 @@ export const validateReservation = (req, res, next) => {
 
        next()
 }
+
+export const validateOrder = (req, res, next) => {
+       console.log('[VALIDATION] Received order data for validation:', req.body)
+       
+       const { customerName, customerPhone, orderType, items, totalPrice } = req.body
+       const errors = []
+
+       // Customer name validation
+       if (!customerName || customerName.trim().length < 2) {
+              errors.push("Nama pemesan harus diisi minimal 2 karakter")
+       }
+
+       // Phone validation
+       const phoneRegex = /^(\+62|62|0)[0-9]{9,13}$/
+       if (!customerPhone || !phoneRegex.test(customerPhone.replace(/\s|-/g, ""))) {
+              errors.push("Nomor telepon tidak valid")
+       }
+
+       // Order type validation
+       const validOrderTypes = ["dine-in", "takeaway", "delivery"]
+       if (!orderType || !validOrderTypes.includes(orderType)) {
+              errors.push("Jenis pesanan tidak valid")
+       }
+
+       // Delivery address validation for delivery orders
+       if (orderType === "delivery" && (!req.body.deliveryAddress || req.body.deliveryAddress.trim().length < 10)) {
+              errors.push("Alamat pengantaran harus diisi minimal 10 karakter untuk pesanan antar")
+       }
+
+       // Items validation
+       if (!items || !Array.isArray(items) || items.length === 0) {
+              errors.push("Pesanan harus berisi minimal 1 item")
+       } else {
+              items.forEach((item, index) => {
+                     if (!item.id || !item.name || !item.price || !item.quantity) {
+                            errors.push(`Item ke-${index + 1} tidak lengkap`)
+                     }
+                     if (item.quantity < 1 || item.quantity > 50) {
+                            errors.push(`Jumlah item ${item.name} harus antara 1-50`)
+                     }
+                     if (item.price < 1000 || item.price > 1000000) {
+                            errors.push(`Harga item ${item.name} tidak valid`)
+                     }
+              })
+       }
+
+       // Total price validation
+       if (!totalPrice || totalPrice < 1000) {
+              errors.push("Total harga minimal Rp 1.000")
+       }
+
+       // Validate calculated total matches sent total
+       if (items && Array.isArray(items)) {
+              const calculatedTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+              console.log('[VALIDATION] Calculated total:', calculatedTotal, 'Sent total:', totalPrice)
+              
+              if (Math.abs(calculatedTotal - totalPrice) > 100) {
+                     // Allow small rounding differences
+                     errors.push("Total harga tidak sesuai dengan perhitungan")
+              }
+       }
+
+       if (errors.length > 0) {
+              console.log('[VALIDATION] Validation errors:', errors)
+              return res.status(400).json({
+                     success: false,
+                     message: "Validasi pesanan gagal",
+                     errors,
+              })
+       }
+
+       console.log('[VALIDATION] Order validation passed')
+       next()
+}

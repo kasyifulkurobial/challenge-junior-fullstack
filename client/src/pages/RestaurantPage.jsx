@@ -14,13 +14,25 @@ const RestaurantPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState("")
 
+  const [cart, setCart] = useState([])
+  const [showCart, setShowCart] = useState(false)
+  const [orderForm, setOrderForm] = useState({
+    customerName: "",
+    customerPhone: "",
+    deliveryAddress: "",
+    orderType: "dine-in", // dine-in, takeaway, delivery
+  })
+  const [isOrderSubmitting, setIsOrderSubmitting] = useState(false)
+  const [orderMessage, setOrderMessage] = useState("")
+
   const menuItems = {
     makananUtama: [
       {
         id: 1,
         name: "Rendang Daging Sapi",
         description: "Daging sapi empuk dimasak dengan santan dan rempah-rempah pilihan selama berjam-jam",
-        price: "Rp 45.000",
+        price: 45000,
+        priceText: "Rp 45.000",
         image: "/rendang-daging-sapi-padang.png",
         badge: "Best Seller",
       },
@@ -28,7 +40,8 @@ const RestaurantPage = () => {
         id: 2,
         name: "Ayam Pop Padang",
         description: "Ayam kampung dimasak dengan bumbu kuning khas Padang, gurih dan lezat",
-        price: "Rp 35.000",
+        price: 35000,
+        priceText: "Rp 35.000",
         image: "/ayam-pop-padang.png",
         badge: "",
       },
@@ -36,7 +49,8 @@ const RestaurantPage = () => {
         id: 3,
         name: "Gulai Ikan Kakap",
         description: "Ikan kakap segar dimasak dengan kuah gulai santan yang kaya rempah",
-        price: "Rp 40.000",
+        price: 40000,
+        priceText: "Rp 40.000",
         image: "/gulai-ikan-kakap-padang.png",
         badge: "",
       },
@@ -44,7 +58,8 @@ const RestaurantPage = () => {
         id: 4,
         name: "Dendeng Balado",
         description: "Dendeng sapi kering dibalur dengan sambal balado pedas yang menggugah selera",
-        price: "Rp 50.000",
+        price: 50000,
+        priceText: "Rp 50.000",
         image: "/dendeng-balado-padang.png",
         badge: "Spicy",
       },
@@ -54,7 +69,8 @@ const RestaurantPage = () => {
         id: 5,
         name: "Es Teh Manis",
         description: "Teh manis segar dengan es batu, cocok untuk cuaca panas",
-        price: "Rp 8.000",
+        price: 8000,
+        priceText: "Rp 8.000",
         image: "/es-teh-manis-indonesia.png",
         badge: "",
       },
@@ -62,7 +78,8 @@ const RestaurantPage = () => {
         id: 6,
         name: "Es Jeruk Nipis",
         description: "Jeruk nipis segar dengan gula aren, menyegarkan dan sehat",
-        price: "Rp 12.000",
+        price: 12000,
+        priceText: "Rp 12.000",
         image: "/es-jeruk-nipis-segar.png",
         badge: "",
       },
@@ -70,7 +87,8 @@ const RestaurantPage = () => {
         id: 7,
         name: "Kopi Tubruk",
         description: "Kopi robusta pilihan diseduh dengan cara tradisional",
-        price: "Rp 10.000",
+        price: 10000,
+        priceText: "Rp 10.000",
         image: "/kopi-tubruk-tradisional.png",
         badge: "",
       },
@@ -80,7 +98,8 @@ const RestaurantPage = () => {
         id: 8,
         name: "Kerupuk Jangek",
         description: "Kerupuk kulit sapi renyah, cocok sebagai pelengkap makan",
-        price: "Rp 15.000",
+        price: 15000,
+        priceText: "Rp 15.000",
         image: "/kerupuk-jangek-padang.png",
         badge: "",
       },
@@ -88,7 +107,8 @@ const RestaurantPage = () => {
         id: 9,
         name: "Sambal Lado Mudo",
         description: "Sambal cabai hijau segar dengan tomat dan bawang, pedas menyengat",
-        price: "Rp 5.000",
+        price: 5000,
+        priceText: "Rp 5.000",
         image: "/sambal-lado-mudo-padang.png",
         badge: "Extra Spicy",
       },
@@ -97,9 +117,79 @@ const RestaurantPage = () => {
 
   const [activeTab, setActiveTab] = useState("makananUtama")
 
+  const addToCart = (item) => {
+    const existingItem = cart.find((cartItem) => cartItem.id === item.id)
+    if (existingItem) {
+      setCart(
+        cart.map((cartItem) => (cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem)),
+      )
+    } else {
+      setCart([...cart, { ...item, quantity: 1 }])
+    }
+    setShowCart(true)
+  }
+
+  const removeFromCart = (itemId) => {
+    setCart(cart.filter((item) => item.id !== itemId))
+  }
+
+  const updateQuantity = (itemId, newQuantity) => {
+    if (newQuantity === 0) {
+      removeFromCart(itemId)
+    } else {
+      setCart(cart.map((item) => (item.id === itemId ? { ...item, quantity: newQuantity } : item)))
+    }
+  }
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0)
+  }
+
+  const handleOrderSubmit = async (e) => {
+    e.preventDefault()
+    if (cart.length === 0) {
+      setOrderMessage("Keranjang kosong! Silakan pilih menu terlebih dahulu.")
+      return
+    }
+
+    setIsOrderSubmitting(true)
+    setOrderMessage("")
+
+    try {
+      const orderData = {
+        ...orderForm,
+        items: cart,
+        totalPrice: getTotalPrice(),
+        orderDate: new Date().toISOString(),
+      }
+
+      await axios.post("http://localhost:5000/api/orders", orderData)
+      setOrderMessage("Pesanan berhasil dikirim! Kami akan menghubungi Anda segera untuk konfirmasi.")
+      setCart([])
+      setShowCart(false)
+      setOrderForm({
+        customerName: "",
+        customerPhone: "",
+        deliveryAddress: "",
+        orderType: "dine-in",
+      })
+    } catch {
+      setOrderMessage("Terjadi kesalahan. Silakan coba lagi.")
+    } finally {
+      setIsOrderSubmitting(false)
+    }
+  }
+
   const handleInputChange = (e) => {
     setReservationForm({
       ...reservationForm,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  const handleOrderInputChange = (e) => {
+    setOrderForm({
+      ...orderForm,
       [e.target.name]: e.target.value,
     })
   }
@@ -128,6 +218,210 @@ const RestaurantPage = () => {
 
   return (
     <div className="min-h-screen">
+      {cart.length > 0 && (
+        <button
+          onClick={() => setShowCart(true)}
+          className="fixed bottom-6 right-6 bg-red-600 text-white p-4 rounded-full shadow-lg hover:bg-red-700 transition-colors z-50"
+          aria-label={`Lihat keranjang dengan ${cart.length} item`}
+          title={`Keranjang (${cart.length} item)`}
+        >
+          <div className="relative">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6"
+              />
+            </svg>
+            <span className="absolute -top-2 -right-2 bg-yellow-400 text-red-800 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+              {cart.length}
+            </span>
+          </div>
+        </button>
+      )}
+
+      {showCart && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">Keranjang Pesanan</h2>
+                <button
+                  onClick={() => setShowCart(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                  aria-label="Tutup keranjang"
+                  title="Tutup keranjang"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {cart.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">Keranjang kosong</p>
+              ) : (
+                <>
+                  <div className="space-y-4 mb-6">
+                    {cart.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg">
+                        <img
+                          src={item.image || "/placeholder.svg"}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                          <p className="text-red-600 font-bold">{item.priceText}</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300"
+                            aria-label={`Kurangi jumlah ${item.name}`}
+                            title={`Kurangi jumlah ${item.name}`}
+                          >
+                            -
+                          </button>
+                          <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300"
+                            aria-label={`Tambah jumlah ${item.name}`}
+                            title={`Tambah jumlah ${item.name}`}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-red-500 hover:text-red-700"
+                          aria-label={`Hapus ${item.name} dari keranjang`}
+                          title={`Hapus ${item.name} dari keranjang`}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t pt-4 mb-6">
+                    <div className="flex justify-between items-center text-xl font-bold">
+                      <span>Total:</span>
+                      <span className="text-red-600">Rp {getTotalPrice().toLocaleString("id-ID")}</span>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleOrderSubmit} className="space-y-4">
+                    <div>
+                      <label htmlFor="customerName" className="block text-sm font-semibold text-gray-700 mb-2">
+                        Nama Pemesan
+                      </label>
+                      <input
+                        type="text"
+                        id="customerName"
+                        name="customerName"
+                        value={orderForm.customerName}
+                        onChange={handleOrderInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        placeholder="Masukkan nama pemesan"
+                        aria-describedby="customerName-help"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="customerPhone" className="block text-sm font-semibold text-gray-700 mb-2">
+                        Nomor WhatsApp
+                      </label>
+                      <input
+                        type="tel"
+                        id="customerPhone"
+                        name="customerPhone"
+                        value={orderForm.customerPhone}
+                        onChange={handleOrderInputChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        placeholder="08xxxxxxxxxx"
+                        aria-describedby="customerPhone-help"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="orderType" className="block text-sm font-semibold text-gray-700 mb-2">
+                        Jenis Pesanan
+                      </label>
+                      <select
+                        id="orderType"
+                        name="orderType"
+                        value={orderForm.orderType}
+                        onChange={handleOrderInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        aria-describedby="orderType-help"
+                      >
+                        <option value="dine-in">Makan di Tempat</option>
+                        <option value="takeaway">Bungkus</option>
+                        <option value="delivery">Antar</option>
+                      </select>
+                    </div>
+
+                    {orderForm.orderType === "delivery" && (
+                      <div>
+                        <label htmlFor="deliveryAddress" className="block text-sm font-semibold text-gray-700 mb-2">
+                          Alamat Pengantaran
+                        </label>
+                        <textarea
+                          id="deliveryAddress"
+                          name="deliveryAddress"
+                          value={orderForm.deliveryAddress}
+                          onChange={handleOrderInputChange}
+                          required={orderForm.orderType === "delivery"}
+                          rows={3}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                          placeholder="Masukkan alamat lengkap untuk pengantaran"
+                          aria-describedby="deliveryAddress-help"
+                        />
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={isOrderSubmitting}
+                      className="w-full bg-red-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-describedby="order-submit-help"
+                    >
+                      {isOrderSubmitting ? "Mengirim Pesanan..." : "Kirim Pesanan"}
+                    </button>
+                  </form>
+
+                  {orderMessage && (
+                    <div
+                      className={`mt-4 p-4 rounded-lg ${
+                        orderMessage.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                      }`}
+                      role="alert"
+                      aria-live="polite"
+                    >
+                      {orderMessage}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center bg-gradient-to-r from-red-600 to-orange-600 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-40"></div>
@@ -146,12 +440,16 @@ const RestaurantPage = () => {
             <button
               onClick={() => document.getElementById("menu").scrollIntoView({ behavior: "smooth" })}
               className="bg-white text-red-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
+              aria-label="Lihat menu makanan"
+              title="Lihat menu makanan"
             >
               Lihat Menu
             </button>
             <button
               onClick={() => document.getElementById("reservasi").scrollIntoView({ behavior: "smooth" })}
               className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-red-600 transition-all duration-300 transform hover:scale-105"
+              aria-label="Reservasi meja"
+              title="Reservasi meja"
             >
               Reservasi Meja
             </button>
@@ -164,7 +462,11 @@ const RestaurantPage = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <img src="/traditional-padang-kitchen-cooking.png" alt="Dapur Tradisional" className="rounded-2xl shadow-2xl" />
+              <img
+                src="/traditional-padang-kitchen-cooking.png"
+                alt="Dapur Tradisional"
+                className="rounded-2xl shadow-2xl"
+              />
             </div>
             <div>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Cerita di Balik Dapur Kami</h2>
@@ -212,6 +514,8 @@ const RestaurantPage = () => {
                   ? "bg-red-600 text-white shadow-lg"
                   : "bg-white text-gray-600 hover:bg-red-100"
               }`}
+              aria-label="Tampilkan menu makanan utama"
+              title="Menu makanan utama"
             >
               Makanan Utama
             </button>
@@ -220,6 +524,8 @@ const RestaurantPage = () => {
               className={`px-6 py-3 mx-2 mb-2 rounded-full font-semibold transition-all duration-300 ${
                 activeTab === "minuman" ? "bg-red-600 text-white shadow-lg" : "bg-white text-gray-600 hover:bg-red-100"
               }`}
+              aria-label="Tampilkan menu minuman"
+              title="Menu minuman"
             >
               Minuman
             </button>
@@ -230,6 +536,8 @@ const RestaurantPage = () => {
                   ? "bg-red-600 text-white shadow-lg"
                   : "bg-white text-gray-600 hover:bg-red-100"
               }`}
+              aria-label="Tampilkan menu makanan ringan"
+              title="Menu makanan ringan"
             >
               Makanan Ringan
             </button>
@@ -266,8 +574,13 @@ const RestaurantPage = () => {
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{item.name}</h3>
                   <p className="text-gray-600 mb-4 text-pretty">{item.description}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-red-600">{item.price}</span>
-                    <button className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors duration-300">
+                    <span className="text-2xl font-bold text-red-600">{item.priceText}</span>
+                    <button
+                      onClick={() => addToCart(item)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors duration-300"
+                      aria-label={`Pesan ${item.name} seharga ${item.priceText}`}
+                      title={`Pesan ${item.name}`}
+                    >
                       Pesan
                     </button>
                   </div>
@@ -325,39 +638,51 @@ const RestaurantPage = () => {
             <form onSubmit={handleReservationSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
+                  <label htmlFor="reservationName" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Nama Lengkap
+                  </label>
                   <input
                     type="text"
+                    id="reservationName"
                     name="name"
                     value={reservationForm.name}
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     placeholder="Masukkan nama lengkap"
+                    aria-describedby="reservationName-help"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nomor WhatsApp</label>
+                  <label htmlFor="reservationPhone" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Nomor WhatsApp
+                  </label>
                   <input
                     type="tel"
+                    id="reservationPhone"
                     name="phone"
                     value={reservationForm.phone}
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     placeholder="08xxxxxxxxxx"
+                    aria-describedby="reservationPhone-help"
                   />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Jumlah Tamu</label>
+                  <label htmlFor="reservationGuests" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Jumlah Tamu
+                  </label>
                   <select
+                    id="reservationGuests"
                     name="guests"
                     value={reservationForm.guests}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    aria-describedby="reservationGuests-help"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <option key={num} value={num}>
@@ -367,25 +692,33 @@ const RestaurantPage = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tanggal</label>
+                  <label htmlFor="reservationDate" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Tanggal
+                  </label>
                   <input
                     type="date"
+                    id="reservationDate"
                     name="date"
                     value={reservationForm.date}
                     onChange={handleInputChange}
                     required
                     min={new Date().toISOString().split("T")[0]}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    aria-describedby="reservationDate-help"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Waktu</label>
+                  <label htmlFor="reservationTime" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Waktu
+                  </label>
                   <select
+                    id="reservationTime"
                     name="time"
                     value={reservationForm.time}
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    aria-describedby="reservationTime-help"
                   >
                     <option value="">Pilih waktu</option>
                     <option value="11:00">11:00</option>
@@ -402,6 +735,7 @@ const RestaurantPage = () => {
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full bg-red-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-describedby="reservation-submit-help"
               >
                 {isSubmitting ? "Mengirim..." : "Kirim Reservasi"}
               </button>
@@ -412,6 +746,8 @@ const RestaurantPage = () => {
                 className={`mt-4 p-4 rounded-lg ${
                   message.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                 }`}
+                role="alert"
+                aria-live="polite"
               >
                 {message}
               </div>
@@ -450,7 +786,7 @@ const RestaurantPage = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">Telepon</p>
-                      <p className="text-gray-600">+62 813 3261 4507</p>
+                      <p className="text-gray-600">+62 751 123456</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
@@ -459,7 +795,7 @@ const RestaurantPage = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">WhatsApp</p>
-                      <p className="text-gray-600">+62 +62 813 3261 4507</p>
+                      <p className="text-gray-600">+62 812 3456 7890</p>
                     </div>
                   </div>
                 </div>
