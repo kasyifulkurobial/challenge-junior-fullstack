@@ -27,7 +27,6 @@ function App() {
   }, []);
 
   return (
-    // Navbar dan Footer sudah dihapus dari sini
     <Routes>
       {/* Rute-rute ini tidak memiliki Navbar dan Footer */}
       <Route path="/" element={<HomePage />} />
@@ -35,7 +34,6 @@ function App() {
       <Route path="/case2" element={<Case2Page />} />
       <Route path="/admin" element={<AdminDashboard />} />
 
-      {/* Rute ini dan semua anaknya akan menggunakan RestaurantLayout */}
       <Route element={<RestaurantLayout />}>
         <Route path="/restaurant" element={<RestaurantPage />} />
       </Route>

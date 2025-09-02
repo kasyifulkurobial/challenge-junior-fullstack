@@ -7,16 +7,19 @@ Website UMKM untuk rumah makan Padang dengan 3 case study: technical test fruits
 \`\`\`
 rumah-makan-project/
 ├── client/                 # Frontend React + Vite
+│   ├── public/
 │   ├── src/
 │   │   ├── components/     # Komponen reusable
 │   │   ├── layouts/        # Halaman layout
 │   │   ├── pages/          # Halaman utama
+│   │   └── App.jsx
 │   │   └── main.jsx        # Entry point
 │   ├── package.json
+│   ├── index.html
 │   └── vite.config.js
 ├── server/                 # Backend Express.js
 │   ├── controllers/        # Business logic
-│   ├── middleware/         # Custom middleware
+│   ├── middlewares/        # Custom middleware
 │   ├── routes/             # API routes
 │   ├── data/               # Database files
 │   ├── package.json
@@ -32,7 +35,7 @@ rumah-makan-project/
 
 ### 1. Clone Repository
 \`\`\`bash
-git clone <repository-url>
+git clone https://github.com/kasyifulkurobial/challenge-junior-fullstack.git
 cd rumah-makan-project
 \`\`\`
 
@@ -256,12 +259,3 @@ Website fully responsive untuk:
 3. **completed** - Selesai
 4. **cancelled** - Dibatalkan
 
-## 🔮 Future Enhancements
-
-- [ ] Payment gateway integration
-- [ ] Real-time notifications
-- [ ] Customer loyalty program
-- [ ] Inventory management
-- [ ] Sales reporting
-- [ ] Mobile app version
-- [ ] Multi-language support

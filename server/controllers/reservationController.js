@@ -157,5 +157,4 @@ export const updateReservationStatus = async (req, res, next) => {
   }
 }
 
-// Keep backward compatibility
 export const getReservations = getAllReservations

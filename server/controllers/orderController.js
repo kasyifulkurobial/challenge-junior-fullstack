@@ -2,7 +2,7 @@ import { getDatabase } from "../database.js"
 
 export const createOrder = async (req, res, next) => {
   const db = getDatabase()
-  
+
   try {
     const { customerName, customerPhone, orderType, deliveryAddress, items, totalPrice } = req.body
 
@@ -25,7 +25,7 @@ export const createOrder = async (req, res, next) => {
         },
       )
     })
-    
+
     res.status(201).json({
       success: true,
       message: "Pesanan berhasil dikirim! Kami akan menghubungi Anda untuk konfirmasi.",
@@ -52,7 +52,7 @@ export const createOrder = async (req, res, next) => {
 
 export const getAllOrders = async (req, res, next) => {
   const db = getDatabase()
-  
+
   try {
     const orders = await new Promise((resolve, reject) => {
       db.all("SELECT * FROM orders ORDER BY created_at DESC", (err, rows) => {
@@ -83,7 +83,7 @@ export const getAllOrders = async (req, res, next) => {
 
 export const updateOrderStatus = async (req, res, next) => {
   const db = getDatabase()
-  
+
   try {
     const { id } = req.params
     const { status } = req.body
@@ -120,7 +120,6 @@ export const updateOrderStatus = async (req, res, next) => {
       })
     }
 
-    // Update order status with current timestamp
     const result = await new Promise((resolve, reject) => {
       db.run(
         `UPDATE orders 
@@ -139,10 +138,23 @@ export const updateOrderStatus = async (req, res, next) => {
       )
     })
 
+    // Validasi apakah update berhasil
+    if (result.changes === 0) {
+      console.log(`[ORDER] No rows were updated for order ${id}`)
+      return res.status(404).json({
+        success: false,
+        message: "Pesanan tidak ditemukan atau tidak ada perubahan",
+      })
+    }
+
     res.json({
       success: true,
       message: "Status pesanan berhasil diupdate",
-      data: { id, status },
+      data: {
+        id,
+        status,
+        rowsAffected: result.changes 
+      },
     })
   } catch (error) {
     console.log(`[ORDER] Error in updateOrderStatus:`, error)

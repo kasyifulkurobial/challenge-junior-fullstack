@@ -56,9 +56,9 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }))
 
 try {
   initDatabase()
-  console.log("✅ Database initialized successfully")
+  console.log("Database initialized successfully")
 } catch (error) {
-  console.error("❌ Database initialization failed:", error)
+  console.error("Database initialization failed:", error)
 }
 
 // Health check route
@@ -81,8 +81,8 @@ app.use(notFound)
 app.use(errorHandler)
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`)
-  console.log(`🔧 Admin panel: http://localhost:${PORT}/api/admin`)
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`)
+  console.log(`Server running on http://localhost:${PORT}`)
+  console.log(`Health check: http://localhost:${PORT}/api/health`)
+  console.log(`Admin panel: http://localhost:${PORT}/api/admin`)
+  console.log(`Environment: ${process.env.NODE_ENV || "development"}`)
 })

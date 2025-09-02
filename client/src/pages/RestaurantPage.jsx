@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 
 const RestaurantPage = () => {
@@ -24,6 +24,7 @@ const RestaurantPage = () => {
   })
   const [isOrderSubmitting, setIsOrderSubmitting] = useState(false)
   const [orderMessage, setOrderMessage] = useState("")
+  const [addressError, setAddressError] = useState("")
 
   const menuItems = {
     makananUtama: [
@@ -117,6 +118,34 @@ const RestaurantPage = () => {
 
   const [activeTab, setActiveTab] = useState("makananUtama")
 
+  // Auto hide messages after 6 seconds
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage("")
+      }, 6000)
+      return () => clearTimeout(timer)
+    }
+  }, [message])
+
+  useEffect(() => {
+    if (orderMessage) {
+      const timer = setTimeout(() => {
+        setOrderMessage("")
+      }, 6000)
+      return () => clearTimeout(timer)
+    }
+  }, [orderMessage])
+
+  useEffect(() => {
+    if (addressError) {
+      const timer = setTimeout(() => {
+        setAddressError("")
+      }, 6000)
+      return () => clearTimeout(timer)
+    }
+  }, [addressError])
+
   const addToCart = (item) => {
     const existingItem = cart.find((cartItem) => cartItem.id === item.id)
     if (existingItem) {
@@ -152,8 +181,15 @@ const RestaurantPage = () => {
       return
     }
 
+    // Validate delivery address if delivery is selected
+    if (orderForm.orderType === "delivery" && orderForm.deliveryAddress.trim().length < 7) {
+      setAddressError("Alamat pengantaran harus minimal 7 karakter.")
+      return
+    }
+
     setIsOrderSubmitting(true)
     setOrderMessage("")
+    setAddressError("")
 
     try {
       const orderData = {
@@ -166,13 +202,17 @@ const RestaurantPage = () => {
       await axios.post("http://localhost:5000/api/orders", orderData)
       setOrderMessage("Pesanan berhasil dikirim! Kami akan menghubungi Anda segera untuk konfirmasi.")
       setCart([])
-      setShowCart(false)
       setOrderForm({
         customerName: "",
         customerPhone: "",
         deliveryAddress: "",
         orderType: "dine-in",
       })
+      
+      setTimeout(() => {
+        setShowCart(false)
+      }, 6000)
+      
     } catch {
       setOrderMessage("Terjadi kesalahan. Silakan coba lagi.")
     } finally {
@@ -192,6 +232,10 @@ const RestaurantPage = () => {
       ...orderForm,
       [e.target.name]: e.target.value,
     })
+    
+    if (e.target.name === "deliveryAddress" && addressError) {
+      setAddressError("")
+    }
   }
 
   const handleReservationSubmit = async (e) => {
@@ -262,7 +306,7 @@ const RestaurantPage = () => {
 
             <div className="p-6">
               {cart.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">Keranjang kosong</p>
+                <p className="text-center font-bold text-green-500 py-8">Order berhasil di proses</p>
               ) : (
                 <>
                   <div className="space-y-4 mb-6">
@@ -387,10 +431,20 @@ const RestaurantPage = () => {
                           onChange={handleOrderInputChange}
                           required={orderForm.orderType === "delivery"}
                           rows={3}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
+                            addressError ? "border-red-500" : "border-gray-300"
+                          }`}
                           placeholder="Masukkan alamat lengkap untuk pengantaran"
                           aria-describedby="deliveryAddress-help"
                         />
+                        {addressError && (
+                          <p className="mt-2 text-sm text-red-600" role="alert">
+                            {addressError}
+                          </p>
+                        )}
+                        <p className="mt-1 text-sm text-gray-500">
+                          Alamat harus minimal 7 karakter
+                        </p>
                       </div>
                     )}
 
@@ -786,7 +840,7 @@ const RestaurantPage = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">Telepon</p>
-                      <p className="text-gray-600">+62 751 123456</p>
+                      <p className="text-gray-600">+62 813 3261 4507</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
@@ -795,7 +849,7 @@ const RestaurantPage = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">WhatsApp</p>
-                      <p className="text-gray-600">+62 812 3456 7890</p>
+                      <p className="text-gray-600">+62 813 3261 4507</p>
                     </div>
                   </div>
                 </div>

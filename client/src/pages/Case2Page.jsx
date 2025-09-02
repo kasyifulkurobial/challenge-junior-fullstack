@@ -120,20 +120,22 @@ const Case2Page = () => {
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Algoritma Solusi</h2>
           <div className="bg-gray-900 rounded-lg p-6">
             <pre className="text-green-400 text-sm overflow-x-auto">
-              {`const countTotalComments = (commentsList) => {
-                                                        let total = 0
-                                                        
-                                                        commentsList.forEach(comment => {
-                                                        total += 1 // Hitung komentar saat ini
-                                                        
-                                                        // Jika ada replies, hitung secara rekursif
-                                                        if (comment.replies && comment.replies.length > 0) {
-                                                        total += countTotalComments(comment.replies)
-                                                        }
-                                                        })
-                                                        
-                                                        return total
-                                                 }`}
+              {
+              `const countTotalComments = (commentsList) => {
+                 let total = 0
+
+                 commentsList.forEach(comment => {
+                 total += 1 // Hitung komentar saat ini
+
+                 // Jika ada replies, hitung secara rekursif
+                 if (comment.replies && comment.replies.length > 0) {
+                 total += countTotalComments(comment.replies)
+                 }
+                 })
+
+                 return total
+              }`
+              }
             </pre>
           </div>
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
