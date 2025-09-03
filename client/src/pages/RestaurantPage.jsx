@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import axios from "axios"
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const RestaurantPage = () => {
   const [reservationForm, setReservationForm] = useState({
@@ -10,21 +10,21 @@ const RestaurantPage = () => {
     guests: 1,
     date: "",
     time: "",
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState("")
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const [cart, setCart] = useState([])
-  const [showCart, setShowCart] = useState(false)
+  const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
   const [orderForm, setOrderForm] = useState({
     customerName: "",
     customerPhone: "",
     deliveryAddress: "",
     orderType: "dine-in", // dine-in, takeaway, delivery
-  })
-  const [isOrderSubmitting, setIsOrderSubmitting] = useState(false)
-  const [orderMessage, setOrderMessage] = useState("")
-  const [addressError, setAddressError] = useState("")
+  });
+  const [isOrderSubmitting, setIsOrderSubmitting] = useState(false);
+  const [orderMessage, setOrderMessage] = useState("");
+  const [addressError, setAddressError] = useState("");
 
   const menuItems = {
     makananUtama: [
@@ -114,82 +114,80 @@ const RestaurantPage = () => {
         badge: "Extra Spicy",
       },
     ],
-  }
+  };
 
-  const [activeTab, setActiveTab] = useState("makananUtama")
+  const [activeTab, setActiveTab] = useState("makananUtama");
 
   // Auto hide messages after 6 seconds
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
-        setMessage("")
-      }, 6000)
-      return () => clearTimeout(timer)
+        setMessage("");
+      }, 6000);
+      return () => clearTimeout(timer);
     }
-  }, [message])
+  }, [message]);
 
   useEffect(() => {
     if (orderMessage) {
       const timer = setTimeout(() => {
-        setOrderMessage("")
-      }, 6000)
-      return () => clearTimeout(timer)
+        setOrderMessage("");
+      }, 6000);
+      return () => clearTimeout(timer);
     }
-  }, [orderMessage])
+  }, [orderMessage]);
 
   useEffect(() => {
     if (addressError) {
       const timer = setTimeout(() => {
-        setAddressError("")
-      }, 6000)
-      return () => clearTimeout(timer)
+        setAddressError("");
+      }, 6000);
+      return () => clearTimeout(timer);
     }
-  }, [addressError])
+  }, [addressError]);
 
   const addToCart = (item) => {
-    const existingItem = cart.find((cartItem) => cartItem.id === item.id)
+    const existingItem = cart.find((cartItem) => cartItem.id === item.id);
     if (existingItem) {
-      setCart(
-        cart.map((cartItem) => (cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem)),
-      )
+      setCart(cart.map((cartItem) => (cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + 1 } : cartItem)));
     } else {
-      setCart([...cart, { ...item, quantity: 1 }])
+      setCart([...cart, { ...item, quantity: 1 }]);
     }
-    setShowCart(true)
-  }
+    setShowCart(true);
+  };
 
   const removeFromCart = (itemId) => {
-    setCart(cart.filter((item) => item.id !== itemId))
-  }
+    setCart(cart.filter((item) => item.id !== itemId));
+  };
 
   const updateQuantity = (itemId, newQuantity) => {
     if (newQuantity === 0) {
-      removeFromCart(itemId)
+      removeFromCart(itemId);
     } else {
-      setCart(cart.map((item) => (item.id === itemId ? { ...item, quantity: newQuantity } : item)))
+      setCart(cart.map((item) => (item.id === itemId ? { ...item, quantity: newQuantity } : item)));
     }
-  }
+  };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0)
-  }
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
 
   const handleOrderSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (cart.length === 0) {
-      setOrderMessage("Keranjang kosong! Silakan pilih menu terlebih dahulu.")
-      return
+      setOrderMessage("Keranjang kosong! Silakan pilih menu terlebih dahulu.");
+      return;
     }
 
     // Validate delivery address if delivery is selected
     if (orderForm.orderType === "delivery" && orderForm.deliveryAddress.trim().length < 7) {
-      setAddressError("Alamat pengantaran harus minimal 7 karakter.")
-      return
+      setAddressError("Alamat pengantaran harus minimal 7 karakter.");
+      return;
     }
 
-    setIsOrderSubmitting(true)
-    setOrderMessage("")
-    setAddressError("")
+    setIsOrderSubmitting(true);
+    setOrderMessage("");
+    setAddressError("");
 
     try {
       const orderData = {
@@ -197,68 +195,67 @@ const RestaurantPage = () => {
         items: cart,
         totalPrice: getTotalPrice(),
         orderDate: new Date().toISOString(),
-      }
+      };
 
-      await axios.post("http://localhost:5000/api/orders", orderData)
-      setOrderMessage("Pesanan berhasil dikirim! Kami akan menghubungi Anda segera untuk konfirmasi.")
-      setCart([])
+      await axios.post("http://localhost:5000/api/orders", orderData);
+      setOrderMessage("Pesanan berhasil dikirim! Kami akan menghubungi Anda segera untuk konfirmasi.");
+      setCart([]);
       setOrderForm({
         customerName: "",
         customerPhone: "",
         deliveryAddress: "",
         orderType: "dine-in",
-      })
-      
+      });
+
       setTimeout(() => {
-        setShowCart(false)
-      }, 6000)
-      
+        setShowCart(false);
+      }, 6000);
     } catch {
-      setOrderMessage("Terjadi kesalahan. Silakan coba lagi.")
+      setOrderMessage("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
-      setIsOrderSubmitting(false)
+      setIsOrderSubmitting(false);
     }
-  }
+  };
 
   const handleInputChange = (e) => {
     setReservationForm({
       ...reservationForm,
       [e.target.name]: e.target.value,
-    })
-  }
+    });
+  };
 
   const handleOrderInputChange = (e) => {
     setOrderForm({
       ...orderForm,
       [e.target.name]: e.target.value,
-    })
-    
+    });
+
     if (e.target.name === "deliveryAddress" && addressError) {
-      setAddressError("")
+      setAddressError("");
     }
-  }
+  };
 
   const handleReservationSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setMessage("")
+    e.preventDefault();
+    setIsSubmitting(true);
+    setMessage("");
 
     try {
-      await axios.post("http://localhost:5000/api/reservations", reservationForm)
-      setMessage("Reservasi berhasil dikirim! Kami akan menghubungi Anda segera.")
+      await axios.post("http://localhost:5000/api/reservations", reservationForm);
+      setMessage("Reservasi berhasil dikirim! Kami akan menghubungi Anda segera.");
       setReservationForm({
         name: "",
         phone: "",
         guests: 1,
         date: "",
         time: "",
-      })
+      });
     } catch {
-      setMessage("Terjadi kesalahan. Silakan coba lagi.")
+      setMessage("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen">
@@ -271,32 +268,19 @@ const RestaurantPage = () => {
         >
           <div className="relative">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5 6M7 13l-1.5 6m0 0h9M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6" />
             </svg>
-            <span className="absolute -top-2 -right-2 bg-yellow-400 text-red-800 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-              {cart.length}
-            </span>
+            <span className="absolute -top-2 -right-2 bg-yellow-400 text-red-800 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">{cart.length}</span>
           </div>
         </button>
       )}
-
       {showCart && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-gray-900">Keranjang Pesanan</h2>
-                <button
-                  onClick={() => setShowCart(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                  aria-label="Tutup keranjang"
-                  title="Tutup keranjang"
-                >
+                <button onClick={() => setShowCart(false)} className="text-gray-500 hover:text-gray-700" aria-label="Tutup keranjang" title="Tutup keranjang">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -312,11 +296,7 @@ const RestaurantPage = () => {
                   <div className="space-y-4 mb-6">
                     {cart.map((item) => (
                       <div key={item.id} className="flex items-center space-x-4 bg-gray-50 p-4 rounded-lg">
-                        <img
-                          src={item.image || "/placeholder.svg"}
-                          alt={item.name}
-                          className="w-16 h-16 object-cover rounded-lg"
-                        />
+                        <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">{item.name}</h3>
                           <p className="text-red-600 font-bold">{item.priceText}</p>
@@ -340,19 +320,9 @@ const RestaurantPage = () => {
                             +
                           </button>
                         </div>
-                        <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="text-red-500 hover:text-red-700"
-                          aria-label={`Hapus ${item.name} dari keranjang`}
-                          title={`Hapus ${item.name} dari keranjang`}
-                        >
+                        <button onClick={() => removeFromCart(item.id)} className="text-red-500 hover:text-red-700" aria-label={`Hapus ${item.name} dari keranjang`} title={`Hapus ${item.name} dari keranjang`}>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         </button>
                       </div>
@@ -431,9 +401,7 @@ const RestaurantPage = () => {
                           onChange={handleOrderInputChange}
                           required={orderForm.orderType === "delivery"}
                           rows={3}
-                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${
-                            addressError ? "border-red-500" : "border-gray-300"
-                          }`}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${addressError ? "border-red-500" : "border-gray-300"}`}
                           placeholder="Masukkan alamat lengkap untuk pengantaran"
                           aria-describedby="deliveryAddress-help"
                         />
@@ -442,9 +410,7 @@ const RestaurantPage = () => {
                             {addressError}
                           </p>
                         )}
-                        <p className="mt-1 text-sm text-gray-500">
-                          Alamat harus minimal 7 karakter
-                        </p>
+                        <p className="mt-1 text-sm text-gray-500">Alamat harus minimal 7 karakter</p>
                       </div>
                     )}
 
@@ -459,13 +425,7 @@ const RestaurantPage = () => {
                   </form>
 
                   {orderMessage && (
-                    <div
-                      className={`mt-4 p-4 rounded-lg ${
-                        orderMessage.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                      }`}
-                      role="alert"
-                      aria-live="polite"
-                    >
+                    <div className={`mt-4 p-4 rounded-lg ${orderMessage.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`} role="alert" aria-live="polite">
                       {orderMessage}
                     </div>
                   )}
@@ -475,7 +435,6 @@ const RestaurantPage = () => {
           </div>
         </div>
       )}
-
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center bg-gradient-to-r from-red-600 to-orange-600 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-40"></div>
@@ -487,9 +446,7 @@ const RestaurantPage = () => {
         ></div>
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto" data-aos="fade-up">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">Rasa Asli, Kenangan di Setiap Suapan</h1>
-          <p className="text-xl md:text-2xl mb-8 text-balance">
-            Menyajikan hidangan khas Padang dengan resep warisan sejak tahun 1992
-          </p>
+          <p className="text-xl md:text-2xl mb-8 text-balance">Menyajikan hidangan khas Padang dengan resep warisan sejak tahun 1992</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => document.getElementById("menu").scrollIntoView({ behavior: "smooth" })}
@@ -510,27 +467,20 @@ const RestaurantPage = () => {
           </div>
         </div>
       </section>
-
       {/* Tentang Kami */}
       <section className="py-20 bg-white" data-aos="fade-up">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <img
-                src="/traditional-padang-kitchen-cooking.png"
-                alt="Dapur Tradisional"
-                className="rounded-2xl shadow-2xl"
-              />
+              <img src="/traditional-padang-kitchen-cooking.png" alt="Dapur Tradisional" className="rounded-2xl shadow-2xl" />
             </div>
             <div>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">Cerita di Balik Dapur Kami</h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Dimulai dari hobi memasak Ibu Sari pada tahun 1992, warung kecil kami telah berkembang menjadi rumah
-                makan yang dikenal luas karena cita rasa autentik masakan Padang.
+                Dimulai dari hobi memasak Ibu Sari pada tahun 1992, warung kecil kami telah berkembang menjadi rumah makan yang dikenal luas karena cita rasa autentik masakan Padang.
               </p>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Setiap hidangan dibuat dengan resep turun-temurun yang telah diwariskan dari generasi ke generasi,
-                menggunakan rempah-rempah pilihan dan teknik memasak tradisional yang telah teruji waktu.
+                Setiap hidangan dibuat dengan resep turun-temurun yang telah diwariskan dari generasi ke generasi, menggunakan rempah-rempah pilihan dan teknik memasak tradisional yang telah teruji waktu.
               </p>
               <div className="flex items-center space-x-4">
                 <div className="text-center">
@@ -550,7 +500,6 @@ const RestaurantPage = () => {
           </div>
         </div>
       </section>
-
       {/* Menu Section */}
       <section id="menu" className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -563,11 +512,7 @@ const RestaurantPage = () => {
           <div className="flex flex-wrap justify-center mb-12" data-aos="fade-up" data-aos-delay="100">
             <button
               onClick={() => setActiveTab("makananUtama")}
-              className={`px-6 py-3 mx-2 mb-2 rounded-full font-semibold transition-all duration-300 ${
-                activeTab === "makananUtama"
-                  ? "bg-red-600 text-white shadow-lg"
-                  : "bg-white text-gray-600 hover:bg-red-100"
-              }`}
+              className={`px-6 py-3 mx-2 mb-2 rounded-full font-semibold transition-all duration-300 ${activeTab === "makananUtama" ? "bg-red-600 text-white shadow-lg" : "bg-white text-gray-600 hover:bg-red-100"}`}
               aria-label="Tampilkan menu makanan utama"
               title="Menu makanan utama"
             >
@@ -575,9 +520,7 @@ const RestaurantPage = () => {
             </button>
             <button
               onClick={() => setActiveTab("minuman")}
-              className={`px-6 py-3 mx-2 mb-2 rounded-full font-semibold transition-all duration-300 ${
-                activeTab === "minuman" ? "bg-red-600 text-white shadow-lg" : "bg-white text-gray-600 hover:bg-red-100"
-              }`}
+              className={`px-6 py-3 mx-2 mb-2 rounded-full font-semibold transition-all duration-300 ${activeTab === "minuman" ? "bg-red-600 text-white shadow-lg" : "bg-white text-gray-600 hover:bg-red-100"}`}
               aria-label="Tampilkan menu minuman"
               title="Menu minuman"
             >
@@ -585,11 +528,7 @@ const RestaurantPage = () => {
             </button>
             <button
               onClick={() => setActiveTab("makananRingan")}
-              className={`px-6 py-3 mx-2 mb-2 rounded-full font-semibold transition-all duration-300 ${
-                activeTab === "makananRingan"
-                  ? "bg-red-600 text-white shadow-lg"
-                  : "bg-white text-gray-600 hover:bg-red-100"
-              }`}
+              className={`px-6 py-3 mx-2 mb-2 rounded-full font-semibold transition-all duration-300 ${activeTab === "makananRingan" ? "bg-red-600 text-white shadow-lg" : "bg-white text-gray-600 hover:bg-red-100"}`}
               aria-label="Tampilkan menu makanan ringan"
               title="Menu makanan ringan"
             >
@@ -600,24 +539,13 @@ const RestaurantPage = () => {
           {/* Menu Items */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {menuItems[activeTab].map((item, index) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-                data-aos="fade-up"
-                data-aos-delay={index * 100}
-              >
+              <div key={item.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay={index * 100}>
                 <div className="relative">
                   <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-full h-48 object-cover" />
                   {item.badge && (
                     <span
                       className={`absolute top-4 left-4 px-3 py-1 rounded-full text-sm font-semibold ${
-                        item.badge === "Best Seller"
-                          ? "bg-yellow-400 text-yellow-900"
-                          : item.badge === "Spicy"
-                            ? "bg-red-500 text-white"
-                            : item.badge === "Extra Spicy"
-                              ? "bg-red-700 text-white"
-                              : "bg-blue-500 text-white"
+                        item.badge === "Best Seller" ? "bg-yellow-400 text-yellow-900" : item.badge === "Spicy" ? "bg-red-500 text-white" : item.badge === "Extra Spicy" ? "bg-red-700 text-white" : "bg-blue-500 text-white"
                       }`}
                     >
                       {item.badge}
@@ -654,26 +582,17 @@ const RestaurantPage = () => {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { query: "interior+rumah+makan+padang+traditional", delay: 0 },
-              { query: "suasana+makan+keluarga+indonesia", delay: 100 },
-              { query: "dekorasi+tradisional+minangkabau", delay: 200 },
-              { query: "meja+makan+tradisional+indonesia", delay: 300 },
-              { query: "dapur+terbuka+rumah+makan", delay: 400 },
-              { query: "pelayan+ramah+rumah+makan", delay: 500 },
-              { query: "suasana+ramai+rumah+makan", delay: 600 },
-              { query: "eksterior+rumah+makan+padang", delay: 700 },
+              { src: "/interior-rumah-makan-padang.png", alt: "Interior tradisional rumah makan", delay: 0 },
+              { src: "/suasana-makan-keluarga.png", alt: "Suasana makan keluarga yang hangat", delay: 100 },
+              { src: "/dekorasi-minangkabau.png", alt: "Dekorasi khas Minangkabau", delay: 200 },
+              { src: "/meja-makan-tradisional.png", alt: "Meja makan dengan peralatan tradisional", delay: 300 },
+              { src: "/dapur-terbuka.png", alt: "Dapur terbuka dengan masakan segar", delay: 400 },
+              { src: "/pelayan-ramah.png", alt: "Pelayan yang ramah melayani tamu", delay: 500 },
+              { src: "/suasana-ramai.png", alt: "Suasana ramai saat jam makan", delay: 600 },
+              { src: "/eksterior-rumah-makan.png", alt: "Tampak depan rumah makan", delay: 700 },
             ].map((item, index) => (
-              <div
-                key={index}
-                className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-                data-aos="fade-up"
-                data-aos-delay={item.delay}
-              >
-                <img
-                  src={`/abstract-geometric-shapes.png?height=300&width=300&query=${item.query}`}
-                  alt={`Galeri ${index + 1}`}
-                  className="w-full h-48 object-cover"
-                />
+              <div key={index} className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105" data-aos="fade-up" data-aos-delay={item.delay}>
+                <img src={item.src} alt={item.alt} className="w-full h-48 object-cover" />
               </div>
             ))}
           </div>
@@ -796,28 +715,19 @@ const RestaurantPage = () => {
             </form>
 
             {message && (
-              <div
-                className={`mt-4 p-4 rounded-lg ${
-                  message.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                }`}
-                role="alert"
-                aria-live="polite"
-              >
+              <div className={`mt-4 p-4 rounded-lg ${message.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`} role="alert" aria-live="polite">
                 {message}
               </div>
             )}
           </div>
         </div>
       </section>
-
       {/* Lokasi & Jam Buka */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16" data-aos="fade-up">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Lokasi & Jam Buka</h2>
-            <p className="text-xl text-gray-600">
-              Kunjungi kami untuk merasakan pengalaman kuliner yang tak terlupakan
-            </p>
+            <p className="text-xl text-gray-600">Kunjungi kami untuk merasakan pengalaman kuliner yang tak terlupakan</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-12">
@@ -865,10 +775,7 @@ const RestaurantPage = () => {
                     { day: "Sabtu", time: "10:00 - 23:00" },
                     { day: "Minggu", time: "10:00 - 23:00" },
                   ].map((schedule, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0"
-                    >
+                    <div key={index} className="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
                       <span className="font-semibold text-gray-900">{schedule.day}</span>
                       <span className="text-red-600 font-semibold">{schedule.time}</span>
                     </div>
@@ -876,8 +783,7 @@ const RestaurantPage = () => {
                 </div>
                 <div className="mt-6 p-4 bg-red-50 rounded-lg">
                   <p className="text-red-800 text-sm">
-                    <strong>Catatan:</strong> Kami tutup pada hari libur nasional. Silakan hubungi kami untuk konfirmasi
-                    ketersediaan.
+                    <strong>Catatan:</strong> Kami tutup pada hari libur nasional. Silakan hubungi kami untuk konfirmasi ketersediaan.
                   </p>
                 </div>
               </div>
@@ -886,7 +792,7 @@ const RestaurantPage = () => {
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default RestaurantPage
+export default RestaurantPage;
