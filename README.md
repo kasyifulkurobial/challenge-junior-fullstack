@@ -4,23 +4,22 @@
 [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
 [![Express](https://img.shields.io/badge/Express-4.x-lightgrey.svg)](https://expressjs.com/)
 [![SQLite](https://img.shields.io/badge/SQLite-3.x-blue.svg)](https://sqlite.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > A comprehensive full-stack web application for traditional Padang restaurant management, featuring online ordering system, reservation management, and administrative dashboard.
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-- [API Documentation](#api-documentation)
-- [Database Schema](#database-schema)
-- [Security](#security)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+- [Overview]
+- [Features]
+- [Tech Stack]
+- [Architecture]
+- [Getting Started]
+- [API Documentation]
+- [Database Schema]
+- [Security]
+- [Deployment]
+- [Contributing]
+
 
 ## 🎯 Overview
 
