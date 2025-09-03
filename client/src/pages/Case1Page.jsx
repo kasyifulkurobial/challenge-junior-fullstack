@@ -10,36 +10,12 @@ const fruits = [
     fruitType: "IMPORT",
     stock: 10,
   },
-  { fruitId: 2, 
-    fruitName: "Kurma", 
-    fruitType: "IMPORT", 
-    stock: 20 
-  },
-  { fruitId: 3, 
-    fruitName: "apel", 
-    fruitType: "IMPORT", 
-    stock: 50 
-  },
-  { fruitId: 4, 
-    fruitName: "Manggis", 
-    fruitType: "LOCAL", 
-    stock: 100 
-  },
-  { fruitId: 5, 
-    fruitName: "Jeruk Bali", 
-    fruitType: "LOCAL", 
-    stock: 10 
-  },
-  { fruitId: 5, 
-    fruitName: "KURMA", 
-    fruitType: "IMPORT", 
-    stock: 20 
-  },
-  { fruitId: 5, 
-    fruitName: "Salak", 
-    fruitType: "LOCAL", 
-    stock: 150 
-  },
+  { fruitId: 2, fruitName: "Kurma", fruitType: "IMPORT", stock: 20 },
+  { fruitId: 3, fruitName: "apel", fruitType: "IMPORT", stock: 50 },
+  { fruitId: 4, fruitName: "Manggis", fruitType: "LOCAL", stock: 100 },
+  { fruitId: 5, fruitName: "Jeruk Bali", fruitType: "LOCAL", stock: 10 },
+  { fruitId: 5, fruitName: "KURMA", fruitType: "IMPORT", stock: 20 },
+  { fruitId: 5, fruitName: "Salak", fruitType: "LOCAL", stock: 150 },
 ];
 
 // Fungsi untuk menyelesaikan soal-soal
@@ -50,9 +26,18 @@ function solveFruitProblems() {
   // 2. Berapa jumlah wadah yang dibutuhkan dan buah apa saja di masing-masing wadah?
   const fruitsByType = fruits.reduce((acc, fruit) => {
     if (!acc[fruit.fruitType]) {
-      acc[fruit.fruitType] = [];
+      acc[fruit.fruitType] = new Set();
     }
-    acc[fruit.fruitType].push(fruit.fruitName);
+
+    const normalizedName = fruit.fruitName.toLowerCase();
+
+    const originalName = fruits.find((f) => f.fruitName.toLowerCase() === normalizedName)?.fruitName || fruit.fruitName;
+    acc[fruit.fruitType].add(originalName);
+    return acc;
+  }, {});
+
+  const fruitsByTypeArray = Object.keys(fruitsByType).reduce((acc, type) => {
+    acc[type] = Array.from(fruitsByType[type]);
     return acc;
   }, {});
 
@@ -68,12 +53,17 @@ function solveFruitProblems() {
   }, {});
 
   // 4. Komentar terkait kasus
-  const comments = ["Ada duplikasi fruitId (ID 5 digunakan 3 kali)", "Ada inkonsistensi penulisan nama buah (Apel vs apel, Kurma vs KURMA)", "Perlu normalisasi data untuk menghindari duplikasi dan inkonsistensi"];
+  const comments = [
+    "Ada duplikasi fruitId (ID 5 digunakan 3 kali)",
+    "Ada inkonsistensi penulisan nama buah (Apel vs apel, Kurma vs KURMA)",
+    "Perlu normalisasi data untuk menghindari duplikasi dan inkonsistensi",
+    "Data perlu dibersihkan untuk memastikan konsistensi dalam penamaan dan ID yang unik",
+  ];
 
   return {
     uniqueFruits,
     wadahCount,
-    fruitsByType,
+    fruitsByType: fruitsByTypeArray,
     stockByType,
     comments,
   };
@@ -100,14 +90,14 @@ const Case1Page = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12" data-aos="fade-up">
+        <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Case 1: Technical Test - Fruits Management</h1>
           <p className="text-xl text-gray-600">Solusi untuk manajemen data buah Andi</p>
         </div>
 
         <div className="grid gap-8">
           {/* Soal 1 */}
-          <div className="bg-white rounded-xl shadow-lg p-8" data-aos="fade-up" data-aos-delay="100">
+          <div className="bg-white rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-orange-600 mb-4">1. Buah yang dimiliki Andi</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {results.uniqueFruits?.map((fruit, index) => (
@@ -119,7 +109,7 @@ const Case1Page = () => {
           </div>
 
           {/* Soal 2 */}
-          <div className="bg-white rounded-xl shadow-lg p-8" data-aos="fade-up" data-aos-delay="200">
+          <div className="bg-white rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-orange-600 mb-4">2. Wadah berdasarkan tipe buah</h2>
             <p className="text-lg mb-4">
               Jumlah wadah yang dibutuhkan: <span className="font-bold text-orange-600">{results.wadahCount}</span>
@@ -141,7 +131,7 @@ const Case1Page = () => {
           </div>
 
           {/* Soal 3 */}
-          <div className="bg-white rounded-xl shadow-lg p-8" data-aos="fade-up" data-aos-delay="300">
+          <div className="bg-white rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-orange-600 mb-4">3. Total stock per wadah</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {Object.entries(results.stockByType || {}).map(([type, stock]) => (
@@ -155,7 +145,7 @@ const Case1Page = () => {
           </div>
 
           {/* Soal 4 */}
-          <div className="bg-white rounded-xl shadow-lg p-8" data-aos="fade-up" data-aos-delay="400">
+          <div className="bg-white rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-orange-600 mb-4">4. Komentar terkait kasus</h2>
             <div className="space-y-4">
               {results.comments?.map((comment, index) => (
@@ -170,7 +160,7 @@ const Case1Page = () => {
           </div>
 
           {/* Raw Data */}
-          <div className="bg-gray-900 rounded-xl shadow-lg p-8" data-aos="fade-up" data-aos-delay="500">
+          <div className="bg-gray-900 rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-white mb-4">Data Mentah (Raw Data)</h2>
             <pre className="text-green-400 text-sm overflow-x-auto">{JSON.stringify(fruits, null, 2)}</pre>
           </div>
