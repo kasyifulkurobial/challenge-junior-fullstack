@@ -5,14 +5,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">RM</span>
               </div>
-              <span className="font-display font-bold text-xl">Rumah Makan Padang</span>
+              <span className="font-bold text-xl">Rumah Makan Padang</span>
             </div>
             <p className="text-gray-300 text-sm">
-              Website UMKM yang menampilkan solusi technical test dan showcase rumah makan Padang dengan cita rasa
-              autentik.
+              Sajian masakan Padang autentik dengan cita rasa tradisional yang telah diwariskan turun temurun. 
+              Nikmati kelezatan rendang, gulai, dan berbagai hidangan khas Minangkabau.
             </p>
           </div>
 
@@ -20,42 +20,46 @@ const Footer = () => {
             <h3 className="font-semibold text-lg mb-4">Menu Navigasi</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/" className="text-gray-300 hover:text-white transition-colors">
+                <a href="/restaurant" className="text-gray-300 hover:text-white transition-colors">
                   Beranda
                 </a>
               </li>
               <li>
-                <a href="/case1" className="text-gray-300 hover:text-white transition-colors">
-                  Case 1 - Fruits
+                <a href="/restaurant#menu" className="text-gray-300 hover:text-white transition-colors">
+                  Menu
                 </a>
               </li>
               <li>
-                <a href="/case2" className="text-gray-300 hover:text-white transition-colors">
-                  Case 2 - Comments
+                <a href="/restaurant#reservasi" className="text-gray-300 hover:text-white transition-colors">
+                  Reservasi
                 </a>
               </li>
               <li>
-                <a href="/restaurant" className="text-gray-300 hover:text-white transition-colors">
-                  Rumah Makan
+                <a href="/restaurant#tentang" className="text-gray-300 hover:text-white transition-colors">
+                  Tentang Kami
+                </a>
+              </li>
+              <li>
+                <a href="/restaurant#kontak" className="text-gray-300 hover:text-white transition-colors">
+                  Kontak
                 </a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4">Teknologi</h3>
+            <h3 className="font-semibold text-lg mb-4">Jam Operasional</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li>React.js + Vite</li>
-              <li>Express.js + Node.js</li>
-              <li>Tailwind CSS</li>
-              <li>SQLite Database</li>
+              <li>Senin - Jumat: 10:00 - 22:00</li>
+              <li>Sabtu - Minggu: 10:00 - 23:00</li>
+              <li>Delivery tersedia</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-8 text-center">
           <p className="text-gray-300 text-sm">
-            © 2025 Rumah Makan Padang. Dimasak dengan sepenuh hati oleh orang padang asli.
+            © 2025 Rumah Makan Padang. Dimasak dengan sepenuh hati oleh orang Padang asli.
           </p>
         </div>
       </div>
