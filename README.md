@@ -107,7 +107,6 @@ rumah-makan-project/
 │   │   ├── components/         # Reusable UI components
 │   │   ├── layouts/            # Page layout components
 │   │   ├── pages/              # Application pages
-│   │   ├── utils/              # Utility functions
 │   │   └── styles/             # CSS and styling files
 │   ├── package.json
 │   └── vite.config.js
@@ -116,12 +115,8 @@ rumah-makan-project/
 │   ├── middleware/             # Custom middleware functions
 │   ├── routes/                 # API route definitions
 │   ├── data/                   # Database files
-│   ├── utils/                  # Server utilities
 │   ├── package.json
 │   └── index.js                # Application entry point
-├── docs/                       # Documentation files
-├── .gitignore
-├── LICENSE
 └── README.md
 ```
 
