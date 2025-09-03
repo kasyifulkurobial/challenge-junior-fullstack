@@ -88,7 +88,7 @@ This project is a modern web application designed specifically for Indonesian Pa
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Client (React) │────│  Express API    │────│   SQLite DB     │
+│  Client (React) │────│  Express API    │────│   SQLite DB     │
 │                 │    │                 │    │                 │
 │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
 │ │   Pages     │ │    │ │ Controllers │ │    │ │ Reservations│ │
