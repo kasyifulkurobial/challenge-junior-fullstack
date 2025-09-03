@@ -1,261 +1,500 @@
-# Rumah Makan UMKM Website
+# Rumah Makan Padang - Digital Platform
 
-Website UMKM untuk rumah makan Padang dengan 3 case study: technical test fruits, comments, dan website rumah makan lengkap.
+[![Node.js](https://img.shields.io/badge/Node.js-16.x+-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-lightgrey.svg)](https://expressjs.com/)
+[![SQLite](https://img.shields.io/badge/SQLite-3.x-blue.svg)](https://sqlite.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 🏗️ Struktur Project
+> A comprehensive full-stack web application for traditional Padang restaurant management, featuring online ordering system, reservation management, and administrative dashboard.
 
-\`\`\`
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Getting Started](#getting-started)
+- [API Documentation](#api-documentation)
+- [Database Schema](#database-schema)
+- [Security](#security)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+
+## 🎯 Overview
+
+This project is a modern web application designed specifically for Indonesian Padang restaurants, combining traditional culinary culture with digital innovation. The platform includes three main case studies demonstrating different technical implementations:
+
+1. **Algorithm Implementation** - Fruit categorization system
+2. **Data Structure Management** - Nested comments processing
+3. **Complete Restaurant Management** - Full-featured ordering and reservation system
+
+### Live Demo
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **Backend API**: [http://localhost:5000](http://localhost:5000)
+- **Admin Dashboard**: [http://localhost:5173/admin](http://localhost:5173/admin)
+
+## ✨ Features
+
+### 🍽️ Customer Features
+- **Interactive Menu System** with categorized food items
+- **Smart Shopping Cart** with real-time calculations
+- **Multiple Order Types**: Dine-in, Takeaway, and Delivery
+- **Table Reservation System** with date/time selection
+- **Order Status Tracking** with real-time updates
+- **Responsive Design** optimized for all devices
+- **Accessibility Support** with ARIA compliance
+
+### 👨‍💼 Admin Features
+- **Comprehensive Dashboard** for business analytics
+- **Order Management System** with status workflow
+- **Reservation Management** with capacity planning
+- **Real-time Status Updates** across all orders
+- **Customer Data Management** with order history
+- **Business Intelligence Reports** (coming soon)
+
+### 🔧 Technical Features
+- **RESTful API Architecture** with proper HTTP methods
+- **Real-time Data Synchronization** between client and server
+- **Advanced Security Implementation** with multiple protection layers
+- **Optimized Database Operations** with prepared statements
+- **Error Handling & Logging** for production reliability
+- **Performance Optimization** with caching strategies
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 18** - Modern UI library with hooks
+- **Vite** - Fast build tool and development server
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Router** - Client-side routing
+- **Axios** - HTTP client for API communication
+
+### Backend
+- **Node.js** - JavaScript runtime environment
+- **Express.js** - Web application framework
+- **SQLite3** - Lightweight relational database
+- **Helmet.js** - Security middleware
+- **Express Rate Limit** - API rate limiting
+- **CORS** - Cross-origin resource sharing
+
+### Development Tools
+- **ESLint** - Code linting and formatting
+- **Prettier** - Code formatting
+- **Nodemon** - Development server auto-restart
+- **Git** - Version control system
+
+## 🏗️ Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Client (React) │────│  Express API    │────│   SQLite DB     │
+│                 │    │                 │    │                 │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │   Pages     │ │    │ │ Controllers │ │    │ │ Reservations│ │
+│ │   Components│ │    │ │ Middleware  │ │    │ │ Orders      │ │
+│ │   Layouts   │ │    │ │ Routes      │ │    │ │ Menu Items  │ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### Project Structure
+```
 rumah-makan-project/
-├── client/                 # Frontend React + Vite
-│   ├── public/
+├── client/                     # Frontend Application
+│   ├── public/                 # Static assets
 │   ├── src/
-│   │   ├── components/     # Komponen reusable
-│   │   ├── layouts/        # Halaman layout
-│   │   ├── pages/          # Halaman utama
-│   │   └── App.jsx
-│   │   └── main.jsx        # Entry point
+│   │   ├── components/         # Reusable UI components
+│   │   ├── layouts/            # Page layout components
+│   │   ├── pages/              # Application pages
+│   │   ├── utils/              # Utility functions
+│   │   └── styles/             # CSS and styling files
 │   ├── package.json
-│   ├── index.html
 │   └── vite.config.js
-├── server/                 # Backend Express.js
-│   ├── controllers/        # Business logic
-│   ├── middlewares/        # Custom middleware
-│   ├── routes/             # API routes
-│   ├── data/               # Database files
+├── server/                     # Backend Application
+│   ├── controllers/            # Business logic handlers
+│   ├── middleware/             # Custom middleware functions
+│   ├── routes/                 # API route definitions
+│   ├── data/                   # Database files
+│   ├── utils/                  # Server utilities
 │   ├── package.json
-│   └── index.js          # Server entry point
+│   └── index.js                # Application entry point
+├── docs/                       # Documentation files
+├── .gitignore
+├── LICENSE
 └── README.md
-\`\`\`
+```
 
-## 🚀 Instalasi dan Setup
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18 atau lebih baru)
-- npm atau yarn
 
-### 1. Clone Repository
-\`\`\`bash
-git clone https://github.com/kasyifulkurobial/challenge-junior-fullstack.git
-cd rumah-makan-project
-\`\`\`
+Ensure you have the following installed on your system:
+- **Node.js** (v16.0 or higher) - [Download here](https://nodejs.org/)
+- **npm** (v7.0 or higher) or **yarn** (v1.22 or higher)
+- **Git** - [Download here](https://git-scm.com/)
 
-### 2. Setup Backend (Server)
-\`\`\`bash
-cd server
-npm install
-\`\`\`
+### Installation
 
-Buat file `.env` dari template:
-\`\`\`bash
-cp .env.example .env
-\`\`\`
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/kasyifulkurobial/challenge-junior-fullstack.git
+   cd rumah-makan-project
+   ```
 
-Edit file `.env` sesuai kebutuhan:
-\`\`\`env
-PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
-\`\`\`
+2. **Setup Backend Server**
+   ```bash
+   cd server
+   npm install
+   
+   # Copy environment template
+   cp .env.example .env
+   
+   # Edit .env file with your configuration
+   nano .env
+   ```
 
-Jalankan server:
-\`\`\`bash
-# Development mode
-npm run dev
+3. **Configure Environment Variables**
+   ```env
+   # Server Configuration
+   PORT=5000
+   NODE_ENV=development
+   
+   # Client Configuration
+   CLIENT_URL=http://localhost:5173
+   
+   # Database Configuration
+   DB_PATH=./data/rumah_makan.db
+   
+   # Security Configuration
+   RATE_LIMIT_WINDOW=15
+   RATE_LIMIT_MAX_REQUESTS=100
+   ```
 
-# Production mode
-npm start
-\`\`\`
+4. **Setup Frontend Client**
+   ```bash
+   cd ../client
+   npm install
+   ```
 
-Server akan berjalan di `http://localhost:5000`
+### Development Mode
 
-### 3. Setup Frontend (Client)
-Buka terminal baru:
-\`\`\`bash
-cd client
-npm install
-\`\`\`
+Run both servers simultaneously:
 
-Jalankan development server:
-\`\`\`bash
-npm run dev
-\`\`\`
-
-Client akan berjalan di `http://localhost:5173`
-
-## 📊 API Endpoints
-
-### Health Check
-- `GET /api/health` - Status server
-
-### Reservations
-- `POST /api/reservations` - Buat reservasi baru
-- `GET /api/reservations` - Ambil semua reservasi
-
-### Orders (NEW)
-- `POST /api/orders` - Buat pesanan baru
-- `GET /api/orders` - Ambil semua pesanan
-
-### Admin Management (NEW)
-- `GET /api/admin/orders` - Kelola semua pesanan
-- `PATCH /api/admin/orders/:id/status` - Update status pesanan
-- `GET /api/admin/reservations` - Kelola semua reservasi
-- `PATCH /api/admin/reservations/:id/status` - Update status reservasi
-
-## 🗄️ Database
-
-Menggunakan SQLite dengan tabel:
-- `reservations` - Menyimpan data reservasi pelanggan
-- `orders` - Menyimpan data pesanan makanan (NEW)
-
-Database akan otomatis dibuat saat server pertama kali dijalankan.
-
-## 🛡️ Security Features
-
-- **Helmet.js** - Security headers dengan CSP policy
-- **Rate Limiting** - Pembatasan request per IP (100 req/15 menit)
-- **CORS** - Cross-origin resource sharing
-- **Input Validation** - Validasi data input yang komprehensif
-- **Error Handling** - Centralized error management
-- **SQL Injection Protection** - Prepared statements
-
-## 🎨 Features
-
-### Case 1: Technical Test Fruits
-- Algoritma pencarian buah unik
-- Pengelompokan berdasarkan tipe
-- Perhitungan total stock
-- Visualisasi data interaktif
-
-### Case 2: Technical Test Comments (ENHANCED)
-- **Multi-page navigation** dengan navbar khusus
-- Recursive function untuk nested comments
-- Perhitungan total comments dengan breakdown detail
-- Visualisasi hierarki comments
-- Halaman terpisah untuk algoritma, visualisasi, dan breakdown
-
-### Case 3: Website Rumah Makan Padang (ENHANCED)
-- Hero section yang menggugah selera
-- **Sistem pemesanan online lengkap** dengan keranjang
-- Menu interaktif dengan tabs (Makanan Utama, Minuman, Makanan Ringan)
-- **3 jenis pesanan**: Makan di tempat, Bungkus, Antar
-- Form reservasi terintegrasi dengan validasi
-- Galeri suasana restaurant
-- **Admin dashboard** untuk mengelola pesanan dan reservasi
-- Informasi lokasi dan kontak lengkap
-
-## 🛒 Sistem Pemesanan Online (NEW)
-
-### Fitur Pelanggan:
-- **Keranjang belanja** dengan floating cart button
-- **Tambah/kurang quantity** item
-- **Pilihan jenis pesanan**: Dine-in, Takeaway, Delivery
-- **Form pemesanan** dengan validasi lengkap
-- **Alamat pengantaran** untuk delivery
-- **Kalkulasi total** otomatis
-
-### Fitur Admin:
-- **Dashboard admin** untuk mengelola pesanan
-- **Update status pesanan**: Pending → Confirmed → Preparing → Ready → Delivered
-- **Manajemen reservasi** dengan status tracking
-- **View detail pesanan** dengan breakdown items
-- **Filter dan sorting** berdasarkan status dan tanggal
-
-## 🔧 Development
-
-### Menjalankan dalam Development Mode
-\`\`\`bash
-# Terminal 1 - Backend
+```bash
+# Terminal 1: Start backend server
 cd server
 npm run dev
 
-# Terminal 2 - Frontend  
+# Terminal 2: Start frontend development server
 cd client
 npm run dev
-\`\`\`
+```
 
-### Build untuk Production
-\`\`\`bash
-# Build frontend
+The application will be available at:
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5000
+- **Admin Dashboard**: http://localhost:5173/admin
+
+### Production Build
+
+```bash
+# Build frontend for production
 cd client
 npm run build
 
 # Start production server
-cd server
+cd ../server
 npm start
-\`\`\`
+```
 
-### Akses Admin Dashboard
-Buka `http://localhost:5173/admin` untuk mengakses dashboard admin (dalam development)
+## 📚 API Documentation
 
-## 📱 Responsive Design
+### Base URL
+```
+http://localhost:5000/api
+```
 
-Website fully responsive untuk:
-- Mobile (320px+)
-- Tablet (768px+)
-- Desktop (1024px+)
+### Authentication
+Currently using stateless API. Authentication implementation planned for v2.0.
 
-## ♿ Accessibility Features (FIXED)
+### Endpoints
 
-- **ARIA labels** pada semua button dan form elements
-- **Proper form labels** dengan htmlFor attributes
-- **Screen reader support** dengan sr-only classes
-- **Keyboard navigation** support
-- **Focus management** dengan proper focus indicators
-- **Role attributes** untuk dynamic content
-- **Alt text** untuk semua images
+#### Health Check
+```http
+GET /api/health
+```
+Returns server status and uptime information.
 
-## 🎯 Best Practices Implemented
+#### Orders Management
+```http
+POST   /api/orders                    # Create new order
+GET    /api/orders                    # Get all orders
+GET    /api/orders/:id               # Get order by ID
+PATCH  /api/orders/:id/status        # Update order status
+DELETE /api/orders/:id               # Cancel order
+```
 
-- **Clean Architecture** - MVC pattern dengan separation of concerns
-- **Error Handling** - Comprehensive error management dengan try-catch
-- **Validation** - Input validation dan sanitization di client dan server
-- **Security** - Multiple security layers (Helmet, CORS, Rate Limiting)
-- **Performance** - Optimized database queries dengan prepared statements
-- **Maintainability** - Modular code structure dengan proper file organization
-- **User Experience** - Loading states, error messages, success feedback
-- **Database Design** - Normalized tables dengan proper indexing
+#### Reservations Management
+```http
+POST   /api/reservations             # Create new reservation
+GET    /api/reservations             # Get all reservations
+GET    /api/reservations/:id         # Get reservation by ID
+PATCH  /api/reservations/:id/status  # Update reservation status
+DELETE /api/reservations/:id         # Cancel reservation
+```
 
-## 🚨 Troubleshooting
+#### Admin Operations
+```http
+GET    /api/admin/dashboard          # Get dashboard statistics
+GET    /api/admin/orders             # Get all orders with admin details
+GET    /api/admin/reservations       # Get all reservations with admin details
+PATCH  /api/admin/orders/:id/status  # Admin order status update
+```
 
-### Common Issues:
+### Request/Response Examples
 
-1. **Port sudah digunakan**
-   \`\`\`bash
-   # Ganti port di .env file atau kill process
-   lsof -ti:5000 | xargs kill -9
-   \`\`\`
+#### Create Order
+```json
+POST /api/orders
+Content-Type: application/json
 
-2. **Database error**
-   \`\`\`bash
-   # Hapus database dan restart server
-   rm server/rumah_makan.db
-   npm run dev
-   \`\`\`
+{
+  "customerName": "John Doe",
+  "customerPhone": "08123456789",
+  "orderType": "delivery",
+  "items": [
+    {
+      "name": "Rendang Daging",
+      "price": 25000,
+      "quantity": 2
+    }
+  ],
+  "totalAmount": 50000,
+  "deliveryAddress": "Jl. Malioboro No. 1, Yogyakarta"
+}
+```
 
-3. **CORS error**
-   - Pastikan CLIENT_URL di .env sesuai dengan port frontend
-   - Default: `CLIENT_URL=http://localhost:5173`
+#### Response
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "customerName": "John Doe",
+    "status": "pending",
+    "createdAt": "2025-01-15T10:30:00Z",
+    "totalAmount": 50000
+  },
+  "message": "Order created successfully"
+}
+```
 
-4. **Module not found**
-   \`\`\`bash
-   # Reinstall dependencies
-   rm -rf node_modules package-lock.json
-   npm install
-   \`\`\`
+## 🗄️ Database Schema
 
-## 📈 Status Pesanan
+### Orders Table
+```sql
+CREATE TABLE orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  order_type TEXT CHECK(order_type IN ('dine-in', 'takeaway', 'delivery')) NOT NULL,
+  items TEXT NOT NULL, -- JSON string
+  total_amount INTEGER NOT NULL,
+  delivery_address TEXT,
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled')),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-### Order Status Flow:
-1. **pending** - Pesanan baru masuk
-2. **confirmed** - Pesanan dikonfirmasi admin
-3. **preparing** - Sedang dimasak
-4. **ready** - Siap diambil/diantar
-5. **delivered** - Selesai (untuk takeaway/delivery)
-6. **cancelled** - Dibatalkan
+### Reservations Table
+```sql
+CREATE TABLE reservations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_name TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  reservation_date DATE NOT NULL,
+  reservation_time TIME NOT NULL,
+  party_size INTEGER NOT NULL,
+  special_requests TEXT,
+  status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'confirmed', 'completed', 'cancelled')),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-### Reservation Status Flow:
-1. **pending** - Reservasi baru
-2. **confirmed** - Reservasi dikonfirmasi
-3. **completed** - Selesai
-4. **cancelled** - Dibatalkan
+### Status Workflows
 
+#### Order Status Flow
+```
+pending → confirmed → preparing → ready → delivered
+    ↓         ↓           ↓         ↓
+cancelled cancelled  cancelled cancelled
+```
+
+#### Reservation Status Flow
+```
+pending → confirmed → completed
+    ↓         ↓
+cancelled cancelled
+```
+
+## 🔐 Security
+
+Our application implements multiple security layers:
+
+### Security Features
+- **Helmet.js** - Sets various HTTP headers for security
+- **CORS Configuration** - Controlled cross-origin resource sharing
+- **Rate Limiting** - 100 requests per 15 minutes per IP
+- **Input Validation** - Comprehensive data validation on both client and server
+- **SQL Injection Prevention** - Parameterized queries using prepared statements
+- **XSS Protection** - Input sanitization and output encoding
+- **Error Handling** - Secure error messages without sensitive information exposure
+
+### Security Headers
+```javascript
+// Helmet configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"]
+    }
+  }
+}));
+```
+
+## 🚀 Deployment
+
+### Environment Setup
+
+#### Development
+```bash
+NODE_ENV=development
+npm run dev
+```
+
+#### Production
+```bash
+NODE_ENV=production
+npm run build
+npm start
+```
+
+### Deployment Options
+
+#### Traditional Server Deployment
+1. **VPS/Dedicated Server**
+   ```bash
+   # Clone repository on server
+   git clone <repository-url>
+   cd rumah-makan-project
+   
+   # Install dependencies
+   npm install --production
+   
+   # Build frontend
+   cd client && npm run build
+   
+   # Start with PM2
+   pm2 start server/index.js --name "rumah-makan"
+   ```
+
+2. **Docker Deployment**
+   ```dockerfile
+   # Dockerfile example
+   FROM node:16-alpine
+   WORKDIR /app
+   COPY package*.json ./
+   RUN npm install --production
+   COPY . .
+   EXPOSE 5000
+   CMD ["npm", "start"]
+   ```
+
+#### Cloud Platforms
+- **Heroku** - Easy deployment with git integration
+- **Vercel** - Optimized for React applications
+- **Railway** - Simple full-stack deployment
+- **DigitalOcean App Platform** - Managed container platform
+
+### Performance Optimization
+- **Gzip Compression** enabled for all text resources
+- **Static File Caching** with appropriate cache headers
+- **Database Indexing** on frequently queried columns
+- **Image Optimization** with WebP format support
+- **Lazy Loading** for non-critical resources
+
+## 🧪 Testing
+
+### Running Tests
+```bash
+# Backend tests
+cd server
+npm test
+
+# Frontend tests
+cd client
+npm test
+
+# E2E tests
+npm run test:e2e
+```
+
+### Test Coverage
+- **Unit Tests** - Individual component/function testing
+- **Integration Tests** - API endpoint testing
+- **E2E Tests** - Complete user workflow testing
+- **Performance Tests** - Load and stress testing
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please follow these guidelines:
+
+### Development Workflow
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+### Code Standards
+- Follow **ESLint** configuration
+- Maintain **90%+ test coverage**
+- Use **conventional commit messages**
+- Update **documentation** for new features
+- Ensure **accessibility compliance**
+
+### Bug Reports
+Please use the issue tracker to report bugs. Include:
+- **Environment details** (OS, Node version, browser)
+- **Steps to reproduce** the issue
+- **Expected vs actual behavior**
+- **Screenshots** if applicable
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support & Contact
+
+- **Documentation**: [Wiki Pages](https://github.com/kasyifulkurobial/challenge-junior-fullstack/wiki)
+- **Issues**: [GitHub Issues](https://github.com/kasyifulkurobial/challenge-junior-fullstack/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/kasyifulkurobial/challenge-junior-fullstack/discussions)
+
+## 🙏 Acknowledgments
+
+- **Indonesia Culinary Heritage** - For inspiring traditional Padang cuisine representation
+- **Open Source Community** - For the amazing tools and libraries
+- **Contributors** - Thank you to everyone who has contributed to this project
+
+---
+
+**Built with love for Indonesian UMKM community**
+
+*Last updated: 3 September 2025*
